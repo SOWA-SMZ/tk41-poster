@@ -9,10 +9,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#1b2a4a;
-    --navy-light:#2c4270;
-    --clay:#a8481f;
-    --clay-bright:#c9642f;
+    --navy:#251b4a;
+    --navy-light:#4a3b8a;
+    --clay:#5b3fa0;
+    --clay-bright:#7657c4;
     --chalk:#f6f3ec;
     --green:#375c3a;
     --ink:#241f1a;
@@ -47,8 +47,8 @@
     font-size:12px;
     letter-spacing:0.14em;
     font-weight:700;
-    color:#e7b98a;
-    border:1px solid rgba(231,185,138,0.5);
+    color:#d6c8f5;
+    border:1px solid rgba(214,200,245,0.5);
     border-radius:999px;
     padding:4px 12px;
     margin-bottom:16px;
@@ -60,11 +60,19 @@
     margin:0 0 10px;
     letter-spacing:0.03em;
   }
+  .hero-subtitle{
+    font-size:15px;
+    font-weight:700;
+    color:#e6dcff;
+    margin:0 0 14px;
+    letter-spacing:0.02em;
+  }
   .hero p{
     margin:0;
     font-size:14.5px;
     color:rgba(255,255,255,0.82);
-    max-width:44ch;
+    max-width:52ch;
+    line-height:1.85;
   }
   /* stitch divider — signature element */
   .stitch{
@@ -108,7 +116,7 @@
     border:1.5px solid var(--line); border-radius:10px;
     font-family:inherit; background:#fff; color:var(--ink);
   }
-  input[type="text"]:focus{ outline:none; border-color:var(--clay); box-shadow:0 0 0 3px rgba(168,72,31,0.12); }
+  input[type="text"]:focus{ outline:none; border-color:var(--clay); box-shadow:0 0 0 3px rgba(91,63,160,0.14); }
 
   .block{ margin-bottom:34px; }
 
@@ -120,7 +128,7 @@
     background:#fff; transition:border-color .15s, background .15s;
   }
   .size-card:hover{ border-color:var(--clay-bright); }
-  .size-card.selected{ border-color:var(--clay); background:#fdf4ef; }
+  .size-card.selected{ border-color:var(--clay); background:#f1ecfb; }
   .size-swatch-box{ height:78px; display:flex; align-items:flex-end; justify-content:center; margin-bottom:10px; }
   .size-swatch{ background:var(--navy-light); border-radius:2px; opacity:0.85; }
   .size-card.selected .size-swatch{ background:var(--clay); opacity:1; }
@@ -133,7 +141,7 @@
     text-align:center; cursor:pointer; background:#fbfaf7;
     transition:border-color .15s, background .15s;
   }
-  .dropzone.drag{ border-color:var(--clay); background:#fdf4ef; }
+  .dropzone.drag{ border-color:var(--clay); background:#f1ecfb; }
   .dropzone .icon{ font-size:26px; margin-bottom:8px; }
   .dropzone .main{ font-size:14.5px; font-weight:700; }
   .dropzone .hint{ font-size:12px; color:#8a8276; margin-top:4px; }
@@ -197,14 +205,20 @@
 
   <div class="hero">
     <div class="logo-badge"><img src="logo.png" alt="玉野光南高校野球部 ロゴ" /></div>
-    <span class="eyebrow">玉野光南高校野球部 41期生</span>
-    <h1>ありがとうございました</h1>
-    <p>感謝の気持ちを込めて、選手の写真をポスターにしてお届けします。印刷したい画像とサイズ、選手のお名前をお送りください。</p>
+    <span class="eyebrow">STUDIO T presents</span>
+    <h1>感動をカタチに。</h1>
+    <p class="hero-subtitle">選手ポスター＆写真プリント企画</p>
+    <p>2年半、本当にお疲れさまでした。<br />
+    たくさんの感動をありがとうございました。<br />
+    選手ポスターや写真の印刷を承ります。<br />
+    ポスターでも写真でも、お好きなものを自由にお選びください。<br />
+    ひとまず、1選手につき2枚までとさせていただきます。<br />
+    ご希望の方は、お気軽にお申し込みください。</p>
   </div>
   <div class="stitch">
     <svg viewBox="0 0 400 16" preserveAspectRatio="none">
       <path d="M0 8 Q 10 0, 20 8 T 40 8 T 60 8 T 80 8 T 100 8 T 120 8 T 140 8 T 160 8 T 180 8 T 200 8 T 220 8 T 240 8 T 260 8 T 280 8 T 300 8 T 320 8 T 340 8 T 360 8 T 380 8 T 400 8"
-        fill="none" stroke="#a8481f" stroke-width="1.4" stroke-dasharray="3,5" opacity="0.55"/>
+        fill="none" stroke="#5b3fa0" stroke-width="1.4" stroke-dasharray="3,5" opacity="0.55"/>
     </svg>
   </div>
   <div class="team-photo-wrap">
@@ -230,7 +244,7 @@
 
     <div class="block">
       <div class="step-label"><span class="num">1</span>選手名</div>
-      <h2 class="block-title">お子さまのお名前</h2>
+      <h2 class="block-title">名前</h2>
       <p class="sub">フルネームでご入力ください。</p>
       <input type="text" id="playerName" placeholder="例）桑和 太郎" />
     </div>
@@ -296,7 +310,7 @@
 <script>
   // ================= 設定 =================
   // GASのウェブアプリをデプロイした後、そのURLをここに貼り付けてください
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbyZf-73HeHONrpovsEW9-zmfyGypLkA2PLQnTLm3Zvv6GtZP_48oM_9oPmHUOghn04/exec";
+  const GAS_URL = "ここにGASウェブアプリのURLを貼り付け";
   const MAX_FILE_MB = 15;
   const TOKEN_KEY = "posterAccessToken";
 
