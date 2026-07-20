@@ -35,7 +35,31 @@
     color:#fff;
     padding:44px 28px 34px;
     position:relative;
+    overflow:hidden;
   }
+  .hero-bgtext{
+    position:absolute;
+    top:52%; left:50%;
+    transform:translate(-50%,-50%);
+    font-family:'Shippori Mincho', serif;
+    font-weight:800;
+    font-size:100px;
+    letter-spacing:0.14em;
+    white-space:nowrap;
+    color:transparent;
+    -webkit-text-stroke:1px rgba(255,255,255,0.16);
+    pointer-events:none;
+    z-index:0;
+    text-shadow:0 0 18px rgba(214,200,245,0.2);
+    transition:text-shadow 0.6s ease;
+  }
+  .hero:hover .hero-bgtext{
+    text-shadow:0 0 44px rgba(214,200,245,0.6), 0 0 80px rgba(224,168,63,0.28);
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-bgtext{ transition:none; }
+  }
+  .hero-content{ position:relative; z-index:1; }
   .logo-badge{
     width:58px; height:58px; border-radius:50%; background:#fff;
     display:flex; align-items:center; justify-content:center;
@@ -196,6 +220,7 @@
 
   @media (max-width:400px){
     .hero h1{ font-size:28px; }
+    .hero-bgtext{ font-size:56px; }
     section.screen{ padding:26px 18px 46px; }
   }
 </style>
@@ -204,6 +229,8 @@
 <div id="app">
 
   <div class="hero">
+    <div class="hero-bgtext" aria-hidden="true">心はひとつ</div>
+    <div class="hero-content">
     <div class="logo-badge"><img src="logo.png" alt="玉野光南高校野球部 ロゴ" /></div>
     <span class="eyebrow">STUDIO T presents</span>
     <h1>感動をカタチに。</h1>
@@ -214,6 +241,7 @@
     ポスターでも写真でも、お好きなものを自由にお選びください。<br />
     ひとまず、1選手につき2枚までとさせていただきます。<br />
     ご希望の方は、お気軽にお申し込みください。</p>
+    </div>
   </div>
   <div class="stitch">
     <svg viewBox="0 0 400 16" preserveAspectRatio="none">
@@ -246,7 +274,7 @@
       <div class="step-label"><span class="num">1</span>選手名</div>
       <h2 class="block-title">名前</h2>
       <p class="sub">フルネームでご入力ください。</p>
-      <input type="text" id="playerName" placeholder="例）桑和 太郎" />
+      <input type="text" id="playerName" placeholder="例）清水 学" />
     </div>
 
     <div class="block">
