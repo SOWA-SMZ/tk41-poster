@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>管理者用 | 申込み一覧</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#251b4a;
+    --navy-light:#4a3b8a;
+    --clay:#5b3fa0;
+    --clay-bright:#7657c4;
+    --chalk:#f6f3ec;
+    --green:#375c3a;
+    --ink:#241f1a;
+    --line: rgba(36,31,26,0.12);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--chalk);
+    color: var(--ink);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  #app{ max-width:640px; margin:0 auto; min-height:100vh; background:#fff; box-shadow:0 0 40px rgba(0,0,0,0.06); }
+
+  .hero{
+    background: linear-gradient(160deg, var(--navy) 0%, var(--navy-light) 100%);
+    color:#fff;
+    padding:34px 28px 26px;
+  }
+  .logo-badge{
+    width:48px; height:48px; border-radius:50%; background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    padding:8px; margin-bottom:14px; box-shadow:0 4px 12px rgba(0,0,0,0.22);
+  }
+  .logo-badge img{ width:100%; height:100%; object-fit:contain; }
+  .eyebrow{
+    display:inline-block; font-size:12px; letter-spacing:0.14em; font-weight:700;
+    color:#d6c8f5; border:1px solid rgba(214,200,245,0.5); border-radius:999px;
+    padding:4px 12px; margin-bottom:12px;
+  }
+  .hero h1{ font-family:'Shippori Mincho', serif; font-weight:800; font-size:26px; margin:0; }
+
+  section.screen{ padding:26px 24px 56px; }
+
+  label.field-label{ display:block; font-size:13.5px; font-weight:700; margin-bottom:8px; }
+  input[type="text"]{
+    width:100%; padding:14px 16px; font-size:16px;
+    border:1.5px solid var(--line); border-radius:10px;
+    font-family:inherit; background:#fff; color:var(--ink);
+  }
+  input[type="text"]:focus{ outline:none; border-color:var(--clay); box-shadow:0 0 0 3px rgba(91,63,160,0.14); }
+
+  button.cta{
+    width:100%; padding:15px; font-size:15px; font-weight:900;
+    background:var(--clay); color:#fff; border:none; border-radius:12px;
+    cursor:pointer; letter-spacing:0.02em; font-family:inherit;
+    transition:background .15s;
+  }
+  button.cta:hover{ background:var(--clay-bright); }
+  button.cta:disabled{ background:#c9bfb2; cursor:not-allowed; }
+
+  .error-banner{
+    display:none; background:#fdecea; border:1px solid #f3b7ac; color:#9a2c1a;
+    font-size:13.5px; padding:12px 14px; border-radius:10px; margin-bottom:20px;
+  }
+  .error-banner.show{ display:block; }
+
+  /* gate */
+  #gate .gate-card{ text-align:center; }
+  #gate .lock{ font-size:28px; margin-bottom:12px; }
+  #gate input{ text-align:center; letter-spacing:0.16em; font-weight:700; margin-bottom:16px; }
+
+  /* summary */
+  .summary-bar{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px; }
+  .summary-chip{
+    flex:1 1 auto; min-width:70px; text-align:center; border:1.5px solid var(--line);
+    border-radius:10px; padding:10px 6px; background:#fbfaf7;
+  }
+  .summary-chip .num{ font-family:'Shippori Mincho', serif; font-weight:800; font-size:19px; color:var(--clay); }
+  .summary-chip .label{ font-size:11px; color:#8a8276; margin-top:2px; }
+
+  .toolbar{ display:flex; gap:8px; margin-bottom:22px; }
+  .toolbar input{ flex:1; }
+  .refresh-btn{
+    flex-shrink:0; border:1.5px solid var(--line); background:#fff; border-radius:10px;
+    padding:0 16px; font-size:13px; font-weight:700; color:var(--clay); cursor:pointer; font-family:inherit;
+  }
+  .refresh-btn:hover{ border-color:var(--clay); }
+
+  /* order cards */
+  .order-card{ border:1.5px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:12px; }
+  .order-card-row{ display:flex; gap:12px; }
+  .order-card-thumb{ width:64px; height:64px; object-fit:cover; border-radius:8px; background:#eee; flex-shrink:0; }
+  .order-card-content{ flex:1; min-width:0; }
+  .order-card-top{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px; }
+  .order-card-player{ font-family:'Shippori Mincho', serif; font-weight:800; font-size:15.5px; }
+  .order-card-status{ font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; background:#eaf1e7; color:var(--green); white-space:nowrap; }
+  .order-card-status.cancelled{ background:#f5eae7; color:#9a2c1a; }
+  .order-card-meta{ font-size:12px; color:#6b6459; margin-bottom:8px; }
+  .order-card-meta .num{ color:var(--clay); font-weight:700; }
+  .cancel-btn{
+    border:1.5px solid #d9776a; color:#9a2c1a; background:#fff; font-size:12px; font-weight:700;
+    padding:7px 12px; border-radius:8px; cursor:pointer; font-family:inherit;
+  }
+  .cancel-btn:hover{ background:#fdecea; }
+  .cancel-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+  .status-empty{ text-align:center; color:#8a8276; font-size:13.5px; padding:24px 0; }
+
+  [hidden]{ display:none !important; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="hero">
+    <div class="logo-badge"><img src="logo.png" alt="ロゴ" /></div>
+    <span class="eyebrow">管理者用</span>
+    <h1>申込み一覧</h1>
+  </div>
+
+  <!-- ============ Gate ============ -->
+  <section id="gate" class="screen">
+    <div class="gate-card">
+      <div class="lock">🔒</div>
+      <h2>管理者用パスコード</h2>
+      <div class="error-banner" id="gateError"></div>
+      <input type="text" id="passcodeInput" placeholder="パスコード" autocomplete="off" />
+      <button class="cta" id="gateSubmit">開く</button>
+    </div>
+  </section>
+
+  <!-- ============ List ============ -->
+  <section id="listSection" class="screen" hidden>
+    <div class="error-banner" id="listError"></div>
+    <div class="summary-bar" id="summaryBar"></div>
+    <div class="toolbar">
+      <input type="text" id="filterInput" placeholder="選手名で絞り込み" />
+      <button class="refresh-btn" id="refreshBtn">更新</button>
+    </div>
+    <div id="ordersList"></div>
+  </section>
+
+</div>
+
+<script>
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbyZf-73HeHONrpovsEW9-zmfyGypLkA2PLQnTLm3Zvv6GtZP_48oM_9oPmHUOghn04/exec";
+  const TOKEN_KEY = "posterAdminToken";
+
+  const gate = document.getElementById('gate');
+  const gateError = document.getElementById('gateError');
+  const passcodeInput = document.getElementById('passcodeInput');
+  const gateSubmit = document.getElementById('gateSubmit');
+
+  const listSection = document.getElementById('listSection');
+  const listError = document.getElementById('listError');
+  const summaryBar = document.getElementById('summaryBar');
+  const filterInput = document.getElementById('filterInput');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const ordersList = document.getElementById('ordersList');
+
+  let allOrders = [];
+
+  function showError(el, msg){ el.textContent = msg; el.classList.add('show'); }
+  function hideError(el){ el.classList.remove('show'); el.textContent = ''; }
+
+  if (sessionStorage.getItem(TOKEN_KEY)) {
+    gate.hidden = true;
+    listSection.hidden = false;
+    loadOrders();
+  }
+
+  gateSubmit.addEventListener('click', async () => {
+    hideError(gateError);
+    const passcode = passcodeInput.value.trim();
+    if (!passcode) { showError(gateError, 'パスコードを入力してください'); return; }
+    gateSubmit.disabled = true;
+    gateSubmit.textContent = '確認中…';
+    try {
+      const res = await callGas({ action: 'checkAdminPasscode', passcode });
+      if (res.success) {
+        sessionStorage.setItem(TOKEN_KEY, res.token);
+        gate.hidden = true;
+        listSection.hidden = false;
+        loadOrders();
+      } else {
+        showError(gateError, res.error || 'パスコードが違います');
+      }
+    } catch (err) {
+      showError(gateError, '通信エラーが発生しました。時間をおいて再度お試しください');
+    }
+    gateSubmit.disabled = false;
+    gateSubmit.textContent = '開く';
+  });
+  passcodeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') gateSubmit.click(); });
+
+  refreshBtn.addEventListener('click', () => loadOrders());
+  filterInput.addEventListener('input', () => renderList());
+
+  async function loadOrders(){
+    hideError(listError);
+    const token = sessionStorage.getItem(TOKEN_KEY);
+    if (!token) { showError(listError, 'セッションが切れました。ページを再読み込みしてください'); return; }
+    refreshBtn.disabled = true;
+    refreshBtn.textContent = '更新中…';
+    try {
+      const res = await callGas({ action: 'listAllOrders', token });
+      if (res.success) {
+        allOrders = res.orders;
+        renderSummary();
+        renderList();
+      } else {
+        showError(listError, res.error || '取得に失敗しました');
+      }
+    } catch (err) {
+      showError(listError, '通信エラーが発生しました。時間をおいて再度お試しください');
+    }
+    refreshBtn.disabled = false;
+    refreshBtn.textContent = '更新';
+  }
+
+  function renderSummary(){
+    const active = allOrders.filter(o => o.status !== 'キャンセル');
+    const counts = { A3:0, A2:0, A1:0 };
+    active.forEach(o => { if (counts[o.size] !== undefined) counts[o.size]++; });
+    const cancelledCount = allOrders.length - active.length;
+    summaryBar.innerHTML =
+      chip(active.length, '受付中合計') +
+      chip(counts.A3, 'A3') +
+      chip(counts.A2, 'A2') +
+      chip(counts.A1, 'A1') +
+      chip(cancelledCount, 'キャンセル');
+  }
+  function chip(num, label){
+    return '<div class="summary-chip"><div class="num">' + num + '</div><div class="label">' + label + '</div></div>';
+  }
+
+  function renderList(){
+    const keyword = filterInput.value.trim();
+    const filtered = keyword ? allOrders.filter(o => String(o.playerName).indexOf(keyword) !== -1) : allOrders;
+
+    ordersList.innerHTML = '';
+    if (filtered.length === 0) {
+      ordersList.innerHTML = '<div class="status-empty">申込みはまだありません</div>';
+      return;
+    }
+    filtered.forEach((order) => {
+      const isCancelled = order.status === 'キャンセル';
+      const card = document.createElement('div');
+      card.className = 'order-card';
+      card.innerHTML =
+        '<div class="order-card-row">' +
+          '<img class="order-card-thumb" src="' + escapeHtml(order.thumbnailUrl) + '" alt="" onerror="this.style.visibility=\'hidden\'" />' +
+          '<div class="order-card-content">' +
+            '<div class="order-card-top">' +
+              '<span class="order-card-player">' + escapeHtml(order.playerName) + '</span>' +
+              '<span class="order-card-status' + (isCancelled ? ' cancelled' : '') + '">' + (isCancelled ? 'キャンセル済み' : '受付中') + '</span>' +
+            '</div>' +
+            '<div class="order-card-meta"><span class="num">' + escapeHtml(order.size) + '</span> ／ ' + escapeHtml(order.orderNumber) + ' ／ ' + escapeHtml(order.timestamp) + '</div>' +
+            (isCancelled ? '' : '<button type="button" class="cancel-btn" data-order="' + escapeHtml(order.orderNumber) + '">キャンセルにする</button>') +
+          '</div>' +
+        '</div>';
+      ordersList.appendChild(card);
+    });
+  }
+
+  ordersList.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.cancel-btn');
+    if (!btn) return;
+    const orderNumber = btn.dataset.order;
+    if (!confirm(orderNumber + ' をキャンセル扱いにします。よろしいですか？')) return;
+
+    const token = sessionStorage.getItem(TOKEN_KEY);
+    btn.disabled = true;
+    btn.textContent = '処理中…';
+    try {
+      const res = await callGas({ action: 'cancelOrder', token, orderNumber });
+      if (res.success) {
+        loadOrders();
+      } else {
+        showError(listError, res.error || 'キャンセルに失敗しました');
+        btn.disabled = false;
+        btn.textContent = 'キャンセルにする';
+      }
+    } catch (err) {
+      showError(listError, '通信エラーが発生しました。時間をおいて再度お試しください');
+      btn.disabled = false;
+      btn.textContent = 'キャンセルにする';
+    }
+  });
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  async function callGas(payload){
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return res.json();
+  }
+</script>
+</body>
+</html>
