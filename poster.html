@@ -230,6 +230,30 @@
 
   [hidden]{ display:none !important; }
 
+  /* mode tabs */
+  .mode-tabs{ display:flex; gap:8px; margin-bottom:30px; }
+  .mode-tab{
+    flex:1; padding:11px 6px; border-radius:10px; border:1.5px solid var(--line);
+    background:#fff; font-weight:700; font-size:13px; cursor:pointer;
+    font-family:inherit; color:#8a8276; transition:border-color .15s, color .15s, background .15s;
+  }
+  .mode-tab.active{ border-color:var(--clay); color:var(--clay); background:#f1ecfb; }
+
+  /* order status cards */
+  .order-card{ border:1.5px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:12px; }
+  .order-card-top{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px; }
+  .order-card-number{ font-family:'Shippori Mincho', serif; font-weight:800; color:var(--clay); font-size:14.5px; }
+  .order-card-status{ font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; background:#eaf1e7; color:var(--green); white-space:nowrap; }
+  .order-card-status.cancelled{ background:#f5eae7; color:#9a2c1a; }
+  .order-card-meta{ font-size:12.5px; color:#6b6459; margin-bottom:10px; }
+  .cancel-btn{
+    border:1.5px solid #d9776a; color:#9a2c1a; background:#fff; font-size:12.5px; font-weight:700;
+    padding:8px 14px; border-radius:8px; cursor:pointer; font-family:inherit;
+  }
+  .cancel-btn:hover{ background:#fdecea; }
+  .cancel-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+  .status-empty{ text-align:center; color:#8a8276; font-size:13.5px; padding:24px 0; }
+
   @media (max-width:400px){
     .hero h1{ font-size:28px; }
     .hero-bgtext{ font-size:56px; }
@@ -281,6 +305,12 @@
 
   <!-- ============ Form ============ -->
   <section id="formSection" class="screen" hidden>
+    <div class="mode-tabs">
+      <button type="button" class="mode-tab active" id="tabNew">新規お申し込み</button>
+      <button type="button" class="mode-tab" id="tabStatus">申込み状況・キャンセル</button>
+    </div>
+
+    <div id="newOrderPanel">
     <div class="error-banner" id="formError"></div>
 
     <div class="block">
@@ -334,6 +364,18 @@
     </div>
 
     <button class="cta" id="submitBtn">この内容で送信する</button>
+    </div>
+
+    <div id="statusPanel" hidden>
+      <div class="error-banner" id="statusError"></div>
+      <div class="block">
+        <h2 class="block-title">名前で確認する</h2>
+        <p class="sub">お申し込み時に入力した選手名を入力してください。</p>
+        <input type="text" id="statusPlayerName" placeholder="例）清水 学" />
+        <button class="cta" id="statusSearchBtn" style="margin-top:12px;">確認する</button>
+      </div>
+      <div id="statusResults"></div>
+    </div>
   </section>
 
   <!-- ============ Success ============ -->
@@ -374,6 +416,15 @@
   const removeFile = document.getElementById('removeFile');
   const submitBtn = document.getElementById('submitBtn');
 
+  const tabNew = document.getElementById('tabNew');
+  const tabStatus = document.getElementById('tabStatus');
+  const newOrderPanel = document.getElementById('newOrderPanel');
+  const statusPanel = document.getElementById('statusPanel');
+  const statusError = document.getElementById('statusError');
+  const statusPlayerNameInput = document.getElementById('statusPlayerName');
+  const statusSearchBtn = document.getElementById('statusSearchBtn');
+  const statusResults = document.getElementById('statusResults');
+
   const successSection = document.getElementById('successSection');
   const orderNumberDisplay = document.getElementById('orderNumberDisplay');
   const resetLink = document.getElementById('resetLink');
@@ -383,6 +434,100 @@
 
   function showError(el, msg){ el.textContent = msg; el.classList.add('show'); }
   function hideError(el){ el.classList.remove('show'); el.textContent = ''; }
+
+  // ================= タブ切り替え =================
+  tabNew.addEventListener('click', () => {
+    tabNew.classList.add('active');
+    tabStatus.classList.remove('active');
+    newOrderPanel.hidden = false;
+    statusPanel.hidden = true;
+  });
+  tabStatus.addEventListener('click', () => {
+    tabStatus.classList.add('active');
+    tabNew.classList.remove('active');
+    statusPanel.hidden = false;
+    newOrderPanel.hidden = true;
+  });
+
+  // ================= 申込み状況の確認 =================
+  statusSearchBtn.addEventListener('click', () => searchStatus());
+  statusPlayerNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') searchStatus(); });
+
+  async function searchStatus(){
+    hideError(statusError);
+    const name = statusPlayerNameInput.value.trim();
+    if (!name) { showError(statusError, '選手名を入力してください'); return; }
+    const token = sessionStorage.getItem(TOKEN_KEY);
+    if (!token) { showError(statusError, 'セッションが切れました。ページを再読み込みしてください'); return; }
+
+    statusSearchBtn.disabled = true;
+    statusSearchBtn.textContent = '検索中…';
+    statusResults.innerHTML = '';
+
+    try {
+      const res = await callGas({ action: 'lookupOrders', token, playerName: name });
+      if (res.success) {
+        renderStatusResults(res.orders);
+      } else {
+        showError(statusError, res.error || '確認に失敗しました');
+      }
+    } catch (err) {
+      showError(statusError, '通信エラーが発生しました。時間をおいて再度お試しください');
+    }
+
+    statusSearchBtn.disabled = false;
+    statusSearchBtn.textContent = '確認する';
+  }
+
+  function renderStatusResults(orders){
+    statusResults.innerHTML = '';
+    if (!orders || orders.length === 0) {
+      statusResults.innerHTML = '<div class="status-empty">該当する申込みが見つかりませんでした</div>';
+      return;
+    }
+    orders.forEach((order) => {
+      const isCancelled = order.status === 'キャンセル';
+      const card = document.createElement('div');
+      card.className = 'order-card';
+      card.innerHTML =
+        '<div class="order-card-top">' +
+          '<span class="order-card-number">' + escapeHtml(order.orderNumber) + '</span>' +
+          '<span class="order-card-status' + (isCancelled ? ' cancelled' : '') + '">' + (isCancelled ? 'キャンセル済み' : '受付中') + '</span>' +
+        '</div>' +
+        '<div class="order-card-meta">サイズ：' + escapeHtml(order.size) + ' ／ 申込日時：' + escapeHtml(order.timestamp) + '</div>' +
+        (isCancelled ? '' : '<button type="button" class="cancel-btn" data-order="' + escapeHtml(order.orderNumber) + '">キャンセルする</button>');
+      statusResults.appendChild(card);
+    });
+  }
+
+  statusResults.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.cancel-btn');
+    if (!btn) return;
+    const orderNumber = btn.dataset.order;
+    if (!confirm(orderNumber + ' の申込みをキャンセルします。よろしいですか？')) return;
+
+    const token = sessionStorage.getItem(TOKEN_KEY);
+    btn.disabled = true;
+    btn.textContent = '処理中…';
+    try {
+      const res = await callGas({ action: 'cancelOrder', token, orderNumber });
+      if (res.success) {
+        searchStatus();
+      } else {
+        showError(statusError, res.error || 'キャンセルに失敗しました');
+        btn.disabled = false;
+        btn.textContent = 'キャンセルする';
+      }
+    } catch (err) {
+      showError(statusError, '通信エラーが発生しました。時間をおいて再度お試しください');
+      btn.disabled = false;
+      btn.textContent = 'キャンセルする';
+    }
+  });
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
 
   // ================= パスコードゲート =================
   // トークンはこのセッション中の再入力を省略するためだけに使い、
