@@ -241,6 +241,9 @@
 
   /* order status cards */
   .order-card{ border:1.5px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:12px; }
+  .order-card-row{ display:flex; gap:12px; }
+  .order-card-thumb{ width:64px; height:64px; object-fit:cover; border-radius:8px; background:#eee; flex-shrink:0; }
+  .order-card-content{ flex:1; min-width:0; }
   .order-card-top{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px; }
   .order-card-number{ font-family:'Shippori Mincho', serif; font-weight:800; color:var(--clay); font-size:14.5px; }
   .order-card-status{ font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; background:#eaf1e7; color:var(--green); white-space:nowrap; }
@@ -490,12 +493,17 @@
       const card = document.createElement('div');
       card.className = 'order-card';
       card.innerHTML =
-        '<div class="order-card-top">' +
-          '<span class="order-card-number">' + escapeHtml(order.orderNumber) + '</span>' +
-          '<span class="order-card-status' + (isCancelled ? ' cancelled' : '') + '">' + (isCancelled ? 'キャンセル済み' : '受付中') + '</span>' +
-        '</div>' +
-        '<div class="order-card-meta">サイズ：' + escapeHtml(order.size) + ' ／ 申込日時：' + escapeHtml(order.timestamp) + '</div>' +
-        (isCancelled ? '' : '<button type="button" class="cancel-btn" data-order="' + escapeHtml(order.orderNumber) + '">キャンセルする</button>');
+        '<div class="order-card-row">' +
+          '<img class="order-card-thumb" src="' + escapeHtml(order.thumbnailUrl) + '" alt="" onerror="this.style.visibility=\'hidden\'" />' +
+          '<div class="order-card-content">' +
+            '<div class="order-card-top">' +
+              '<span class="order-card-number">' + escapeHtml(order.orderNumber) + '</span>' +
+              '<span class="order-card-status' + (isCancelled ? ' cancelled' : '') + '">' + (isCancelled ? 'キャンセル済み' : '受付中') + '</span>' +
+            '</div>' +
+            '<div class="order-card-meta">サイズ：' + escapeHtml(order.size) + ' ／ 申込日時：' + escapeHtml(order.timestamp) + '</div>' +
+            (isCancelled ? '' : '<button type="button" class="cancel-btn" data-order="' + escapeHtml(order.orderNumber) + '">キャンセルする</button>') +
+          '</div>' +
+        '</div>';
       statusResults.appendChild(card);
     });
   }
