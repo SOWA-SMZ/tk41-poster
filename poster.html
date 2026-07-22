@@ -60,6 +60,18 @@
     .hero-bgtext{ transition:none; }
   }
   .hero-content{ position:relative; z-index:1; }
+  .urgent-badge{
+    display:inline-block;
+    margin-bottom:16px;
+    padding:8px 16px;
+    background:#e0483f;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:800;
+    color:#fff;
+    letter-spacing:0.02em;
+    box-shadow:0 4px 12px rgba(224,72,63,0.35);
+  }
   .deadline-badge{
     display:inline-block;
     margin-top:18px;
@@ -128,6 +140,21 @@
   .team-photo-caption{
     text-align:center; font-size:12px; color:#8a8276; margin-top:10px;
   }
+  .notice-box{
+    margin:20px 24px 4px;
+    padding:16px 18px;
+    background:#fff8e8;
+    border:1.5px solid #e8c877;
+    border-radius:12px;
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .notice-icon{ font-size:19px; line-height:1.4; }
+  .notice-text p{ margin:0 0 10px; font-size:13px; color:#6b5a1f; line-height:1.75; }
+  .notice-text p:last-child{ margin-bottom:0; }
+  .notice-divider{ border:none; border-top:1px dashed #e0c877; margin:12px 0; }
+  .notice-en{ font-size:12px; color:#8a7841; font-style:italic; line-height:1.65; }
 
   /* ---------- Sections ---------- */
   section.screen{ padding:32px 28px 56px; }
@@ -270,6 +297,7 @@
   <div class="hero">
     <div class="hero-bgtext" aria-hidden="true">心はひとつ</div>
     <div class="hero-content">
+    <div class="urgent-badge">残りわずか！あと数名で受付終了</div>
     <div class="logo-badge"><img src="logo.png" alt="玉野光南高校野球部 ロゴ" /></div>
     <span class="eyebrow">STUDIO T presents</span>
     <h1>感動をカタチに。</h1>
@@ -280,7 +308,7 @@
     ポスターでも写真でも、お好きなものを自由にお選びください。<br />
     ひとまず、1選手につき2枚までとさせていただきます。<br />
     ご希望の方は、お気軽にお申し込みください。</p>
-    <div class="deadline-badge">お申し込み締切：7月26日（日）</div>
+    <div class="deadline-badge">締め切り間近</div>
     </div>
   </div>
   <div class="stitch">
@@ -292,6 +320,19 @@
   <div class="team-photo-wrap">
     <img class="team-photo" src="team-photo.jpg" alt="玉野光南高校野球部 41期生 集合写真" />
     <div class="team-photo-caption">玉野光南高校野球部 41期生</div>
+  </div>
+
+  <div class="notice-box">
+    <div class="notice-icon">📣</div>
+    <div class="notice-text">
+      <p>多数のご依頼ありがとうございます。<br />
+      大判印刷が多いため、残り数名で受付を終了させていただきます。<br />
+      ご利用いただきありがとうございました。</p>
+      <p>A1印刷をご希望の方は、LINEの写真データのため、あまりきれいに印刷できないかもしれませんのでご了承ください。</p>
+      <hr class="notice-divider" />
+      <p class="notice-en">Thank you very much for all the requests we've received. Since large-format prints make up a large share of orders, we will be closing this form after accepting just a few more — thank you for your support!</p>
+      <p class="notice-en">Please note: if you request A1 size, print quality may be limited since the photo data comes from LINE.</p>
+    </div>
   </div>
 
   <!-- ============ Gate ============ -->
