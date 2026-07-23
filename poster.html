@@ -297,7 +297,7 @@
   <div class="hero">
     <div class="hero-bgtext" aria-hidden="true">心はひとつ</div>
     <div class="hero-content">
-    <div class="urgent-badge">残りわずか！あと数名で受付終了</div>
+    <div class="urgent-badge">受付終了</div>
     <div class="logo-badge"><img src="logo.png" alt="玉野光南高校野球部 ロゴ" /></div>
     <span class="eyebrow">STUDIO T presents</span>
     <h1>感動をカタチに。</h1>
@@ -308,7 +308,7 @@
     ポスターでも写真でも、お好きなものを自由にお選びください。<br />
     ひとまず、1選手につき2枚までとさせていただきます。<br />
     ご希望の方は、お気軽にお申し込みください。</p>
-    <div class="deadline-badge">締め切り間近</div>
+    <div class="deadline-badge">受付終了</div>
     </div>
   </div>
   <div class="stitch">
@@ -325,13 +325,11 @@
   <div class="notice-box">
     <div class="notice-icon">📣</div>
     <div class="notice-text">
-      <p>多数のご依頼ありがとうございます。<br />
-      大判印刷が多いため、残り数名で受付を終了させていただきます。<br />
-      ご利用いただきありがとうございました。</p>
-      <p>A1印刷をご希望の方は、LINEの写真データのため、あまりきれいに印刷できないかもしれませんのでご了承ください。</p>
+      <p>この度は、多数のお申し込みをいただき誠にありがとうございました。<br />
+      おかげさまで受付上限に達しましたため、募集を締め切らせていただきます。<br />
+      順次印刷作業に入らせていただきます。</p>
       <hr class="notice-divider" />
-      <p class="notice-en">Thank you very much for all the requests we've received. Since large-format prints make up a large share of orders, we will be closing this form after accepting just a few more — thank you for your support!</p>
-      <p class="notice-en">Please note: if you request A1 size, print quality may be limited since the photo data comes from LINE.</p>
+      <p class="notice-en">Thank you so much for the many requests we received. We have now reached capacity and are closing this request form. We will begin printing the orders in order.</p>
     </div>
   </div>
 
@@ -344,6 +342,16 @@
       <div class="error-banner" id="gateError"></div>
       <input type="text" id="passcodeInput" placeholder="パスコード" autocomplete="off" />
       <button class="cta" id="gateSubmit">進む</button>
+    </div>
+  </section>
+
+  <!-- ============ Closed ============ -->
+  <section id="closedNotice" class="screen" hidden>
+    <div class="gate-card">
+      <div class="lock">🙏</div>
+      <h2 class="block-title">ただいま募集を締め切っております</h2>
+      <p class="sub">上限に達したため募集を締め切らせていただきます。<br />
+      多数のご依頼ありがとうございました。</p>
     </div>
   </section>
 
@@ -440,6 +448,8 @@
   const GAS_URL = "https://script.google.com/macros/s/AKfycbyZf-73HeHONrpovsEW9-zmfyGypLkA2PLQnTLm3Zvv6GtZP_48oM_9oPmHUOghn04/exec";
   const MAX_FILE_MB = 15;
   const TOKEN_KEY = "posterAccessToken";
+  // 募集を締め切るときは true に。再開するときは false に戻すだけでOK（他は何も変えなくて大丈夫です）
+  const SITE_CLOSED = true;
 
   // ================= 要素参照 =================
   const gate = document.getElementById('gate');
@@ -581,12 +591,16 @@
   // ================= パスコードゲート =================
   // トークンはこのセッション中の再入力を省略するためだけに使い、
   // 実際の認可は送信時にサーバー側（GAS）で再検証されます。
-  if (sessionStorage.getItem(TOKEN_KEY)) {
+  if (SITE_CLOSED) {
+    gate.hidden = true;
+    document.getElementById('closedNotice').hidden = false;
+  } else if (sessionStorage.getItem(TOKEN_KEY)) {
     gate.hidden = true;
     formSection.hidden = false;
   }
 
   gateSubmit.addEventListener('click', async () => {
+    if (SITE_CLOSED) return;
     hideError(gateError);
     const passcode = passcodeInput.value.trim();
     if (!passcode) { showError(gateError, 'パスコードを入力してください'); return; }
