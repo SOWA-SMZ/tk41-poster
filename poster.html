@@ -60,36 +60,6 @@
     .hero-bgtext{ transition:none; }
   }
   .hero-content{ position:relative; z-index:1; }
-  .hurry-badge{
-    position:absolute;
-    top:-6px; right:-6px;
-    width:112px; height:112px;
-    z-index:2;
-    animation: hurryBlink 1s ease-in-out infinite;
-  }
-  .hurry-burst{
-    position:absolute; inset:0;
-    border-radius:50%;
-    background: repeating-conic-gradient(#e0483f 0deg 15deg, #ff7a6b 15deg 30deg);
-    box-shadow:0 8px 22px rgba(224,72,63,0.5);
-  }
-  .hurry-text{
-    position:absolute; inset:13px;
-    border-radius:50%;
-    background:#c33327;
-    display:flex; align-items:center; justify-content:center;
-    color:#fff; font-weight:900; font-size:21px; letter-spacing:0.02em;
-    transform:rotate(-10deg);
-    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.55);
-    font-family:'Shippori Mincho', serif;
-  }
-  @keyframes hurryBlink{
-    0%,100%{ opacity:1; transform:scale(1); }
-    50%{ opacity:0.5; transform:scale(1.08); }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .hurry-badge{ animation:none; }
-  }
   .urgent-badge{
     display:inline-block;
     margin-bottom:16px;
@@ -317,8 +287,6 @@
   @media (max-width:400px){
     .hero h1{ font-size:28px; }
     .hero-bgtext{ font-size:56px; }
-    .hurry-badge{ width:82px; height:82px; }
-    .hurry-text{ font-size:15px; }
     section.screen{ padding:26px 18px 46px; }
   }
 </style>
@@ -329,11 +297,7 @@
   <div class="hero">
     <div class="hero-bgtext" aria-hidden="true">心はひとつ</div>
     <div class="hero-content">
-    <div class="hurry-badge" aria-hidden="true">
-      <div class="hurry-burst"></div>
-      <div class="hurry-text">急げ！</div>
-    </div>
-    <div class="urgent-badge">2日間限定 受付再開！</div>
+    <div class="urgent-badge">受付終了</div>
     <div class="logo-badge"><img src="logo.png" alt="玉野光南高校野球部 ロゴ" /></div>
     <span class="eyebrow">STUDIO T presents</span>
     <h1>感動をカタチに。</h1>
@@ -344,7 +308,7 @@
     ポスターでも写真でも、お好きなものを自由にお選びください。<br />
     ひとまず、1選手につき2枚までとさせていただきます。<br />
     ご希望の方は、お気軽にお申し込みください。</p>
-    <div class="deadline-badge">7/29（水）13:00まで</div>
+    <div class="deadline-badge">受付終了</div>
     </div>
   </div>
   <div class="stitch">
@@ -361,10 +325,11 @@
   <div class="notice-box">
     <div class="notice-icon">📣</div>
     <div class="notice-text">
-      <p>ご好評につき、2日間限定で受付を再開いたします。<br />
-      ご希望の方は、お早めにお申し込みください。</p>
+      <p>この度は、多数のお申し込みをいただき誠にありがとうございました。<br />
+      おかげさまで受付上限に達しましたため、募集を締め切らせていただきます。<br />
+      順次印刷作業に入らせていただきます。</p>
       <hr class="notice-divider" />
-      <p class="notice-en">Due to popular demand, we are reopening this request form for 2 days only. Please submit your request as soon as possible.</p>
+      <p class="notice-en">Thank you so much for the many requests we received. We have now reached capacity and are closing this request form. We will begin printing the orders in order.</p>
     </div>
   </div>
 
@@ -484,7 +449,7 @@
   const MAX_FILE_MB = 15;
   const TOKEN_KEY = "posterAccessToken";
   // 募集を締め切るときは true に。再開するときは false に戻すだけでOK（他は何も変えなくて大丈夫です）
-  const SITE_CLOSED = false;
+  const SITE_CLOSED = true;
 
   // ================= 要素参照 =================
   const gate = document.getElementById('gate');
